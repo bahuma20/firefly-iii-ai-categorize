@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>FireflyService III AI Categorizer</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background: lightgray;
+        }
+
+        .container {
+            max-width: max(80%, 1024px);
+            margin: 5% auto;
+            padding: 24px;
+            background: #FFF;
+            border-radius: 5px;
+            box-shadow: 0 0 5px rgba(0, 0, 0, .25);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .job {
+            border: solid 1px;
+            border-radius: 5px;
+            margin-bottom: 2em;
+            padding: 24px;
+        }
+
+        pre {
+            padding: 7px;
+            background: #eeeeee;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Firefly III AI Categorizer</h1>
+    <section>
+        <h2>Jobs</h2>
+        <div id="mount"></div>
+<!--        <article class="job">-->
+<!--            <div><strong>Status:</strong> <span>queued</span></div>-->
+<!--            <div><strong>Created:</strong>-->
+<!--                <time>2023-05-21 15:50:00</time>-->
+<!--            </div>-->
+<!--            <div><strong>Webhook UUID:</strong> <span>34zrurjd-44df-we4dtfds</span></div>-->
+<!--            <div><strong>Destination name:</strong> <span>LIEFERANDO.DE LIEFERSERVI</span></div>-->
+<!--            <div><strong>Description:</strong> <span>LIEFERANDO.DE LIEFERSERVI; AMSTERDAM NL; KARTE 8338; 40010075001 16052023; KDN-REF 000000986464</span>-->
+<!--            </div>-->
+<!--            <div><strong>Prompt:</strong><br>-->
+<!--                <pre>Given i want to categorize transactions on my bank account into this categories: Bargeld, Gas, Haushalt, Kino, Lebensmittel, Lieferdienst, ÖPNV, Restaurants, Rundfunkbeitrag, Strom-->
+<!--In which category would a transaction from "LIEFERANDO.DE LIEFERSERVI" with the subject "LIEFERANDO.DE LIEFERSERVI; AMSTERDAM NL; KARTE 8338; 40010075001 16052023; KDN-REF 000000986464" fall into?-->
+<!--Just output the name of the category. Does not have to be a complete sentence.</pre>-->
+<!--            </div>-->
+<!--            <div><strong>Open AI's guess:</strong><br>-->
+<!--                <pre>-->
+<!--Lieferdienst-->
+<!--</pre>-->
+<!--            </div>-->
+<!--        </article>-->
+    </section>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    let socket = io();
+
+    const mount = document.getElementById('mount');
+
+    socket.on('jobs', jobs => {
+        console.log('jobs', jobs);
+
+        jobs.sort((a, b) => {
+            return new Date(b.created) - new Date(a.created);
+        })
+
+        jobs.forEach(job => {
+            const element = document.createElement('div');
+            element.innerHTML = renderJob(job);
+            mount.appendChild(element)
+        });
+    });
+
+    socket.on('job created', e => {
+        console.log('job created', e);
+        const element = document.createElement('div');
+        element.innerHTML = renderJob(e.job);
+        mount.prepend(element);
+    })
+
+    socket.on('job updated', e => {
+        console.log('job updated', e)
+
+        const element = document.createElement('div');
+        element.innerHTML = renderJob(e.job);
+
+        const oldElement = document.querySelector(`[data-job-id="${e.job.id}"]`);
+        oldElement.before(element);
+        oldElement.remove();
+    })
+
+    const renderJob = (job) => {
+        return `<article class="job" data-job-id="${job.id}">
+            <div><strong>ID:</strong> <span>${job.id}</span></div>
+            <div><strong>Status:</strong> <span>${job.status}</span></div>
+            <div><strong>Created:</strong>
+                <time>${Intl.DateTimeFormat(undefined, {
+            dateStyle: 'medium',
+            timeStyle: 'medium'
+        }).format(new Date(job.created))}</time>
+            </div>
+            <div><strong>Destination name:</strong> <span>${job.data?.destinationName || ''}</span></div>
+            <div><strong>Description:</strong> <span>${job.data?.description || ''}</span>
+            <div><strong>Guessed category:</strong> <span>${job.data?.category ? job.data.category : '<em>Not yet classified</em>'}</span>
+            </div>
+            ${ job.data?.prompt ? `<div><strong>Prompt:</strong><br>
+                <details>
+                    <summary>Show</summary>
+                    <pre>${job.data.prompt}</pre>
+                </details>
+            </div>` : ''}
+            ${ job.data?.response ? `<div><strong>Open AI's response:</strong>
+                 <details>
+                    <summary>Show</summary>
+                    <pre>${job.data.response}</pre>
+                 </details>
+            </div>` : ''}
+        </article>`
+    }
+</script>
+</body>
+</html>
