@@ -53,7 +53,7 @@ version: '3.3'
 
 services:
   categorizer:
-    image: bahuma20/firefly-iii-ai-categorize:latest
+    image: ghcr.io/bahuma20/firefly-iii-ai-categorize:latest
     restart: always
     ports:
       - "3000:3000"
@@ -80,7 +80,7 @@ docker run -d \
 -e FIREFLY_URL=https://firefly.example.com \
 -e FIREFLY_PERSONAL_TOKEN=eyabc123... \
 -e OPENAI_API_KEY=sk-abc123... \
-bahuma20/firefly-iii-ai-categorize:latest
+ghcr.io/bahuma20/firefly-iii-ai-categorize:latest
 ```
 
 ### 4. Set up the webhook
