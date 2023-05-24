@@ -74,8 +74,8 @@ export default class App {
             this.#handleWebhook(req, res);
             res.send("Queued");
         } catch (e) {
-            res.status(400).send(e.message);
             console.error(e)
+            res.status(400).send(e.message);
         }
     }
 

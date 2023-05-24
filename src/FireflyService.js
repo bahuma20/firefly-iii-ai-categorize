@@ -70,8 +70,8 @@ export default class FireflyService {
             throw new FireflyException(response.status, response, await response.text())
         }
 
-        const data = await response.json();
-        console.debug("transaction updated", data);
+        await response.json();
+        console.info("Transaction updated")
     }
 }
 
