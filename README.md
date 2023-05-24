@@ -1,7 +1,7 @@
-# FireflyService III AI categorization
+# Firefly III AI categorization
 
-This project allows you to automatically categorize your expenses by using OpenAI.
-
+This project allows you to automatically categorize your expenses in [Firefly III](https://www.firefly-iii.org/) by
+using OpenAI.
 
 ## How it works
 
@@ -17,15 +17,15 @@ transaction.
 
 If it cannot detect the category, it will not update anything.
 
-
 ## Privacy
+
 Please note that some details of the transactions will be sent to OpenAI as information to guess the category.
 
 These are:
+
 - Transaction description
 - Name of transaction destination account
 - Names of all categories
-
 
 ## Installation
 
@@ -118,7 +118,6 @@ categorization everytime a new transaction comes in.
 
 Now you are ready and every new withdrawal transaction should be automatically categorized by OpenAI.
 
-
 ## User Interface
 
 The application comes with a minimal UI that allows you to monitor the classification queue and see the OpenAI prompts
@@ -129,7 +128,6 @@ To enable this UI set the environment variable `ENABLE_UI` to `true`.
 After a restart of the application the UI can be accessed at `http://localhost:3000/` (or any other URL that allows you
 to reach the container).
 
-
 ## Adjust Tag name
 
 The application automatically sets the tag "AI categorized" on every transaction that was processed and a category could
@@ -137,11 +135,9 @@ be guessed.
 
 You can configure the name of this tag by setting the environment variable `FIREFLY_TAG` accordingly.
 
-
 ## Running on a different port
 
 If you have to run the application on a different port than the default port `3000` set the environment variable `PORT`.
-
 
 ## Full list of environment variables
 
