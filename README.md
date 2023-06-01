@@ -52,8 +52,12 @@ When an API key is created you'll be able to copy the secret key and use it.
 
 ![OpenAI screenshot](docs/img/openai-key.png)
 
-Note: OpenAI currently provides 18$ free credits for 3 months which is great since you won’t have to provide your
+Note: OpenAI currently provides 5$ free credits for 3 months which is great since you won’t have to provide your
 payment details to begin interacting with the API for the first time.
+
+After that you have to enable billing in your account.
+
+Tip: Make sure to set budget limits to prevent suprises at the end of the month.
 
 ### 3. Start the application via Docker
 
