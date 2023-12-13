@@ -3,7 +3,7 @@ import {getConfigVariable} from "./util.js";
 
 export default class OpenAiService {
     #openAi;
-    #model = "text-davinci-003";
+    #model = "gpt-3.5-turbo-instruct";
 
     constructor() {
         const apiKey = getConfigVariable("OPENAI_API_KEY")
