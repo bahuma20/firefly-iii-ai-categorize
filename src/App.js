@@ -146,8 +146,8 @@ export default class App {
 
             if (category || budget) {
 
-                const category_id = categories.indexOf(json.category) === -1 ? -1 : categories.get(category);
-                const budget_id = budgets.indexOf(json.budget) === -1 ? -1 : budgets.get(budget);
+                const category_id = categories.indexOf(category) === -1 ? -1 : categories.get(category);
+                const budget_id = budgets.indexOf(budget) === -1 ? -1 : budgets.get(budget);
 
                 await this.#firefly.setCategoryAndBudget(req.body.content.id, req.body.content.transactions, category_id, budget_id);
             }
