@@ -119,6 +119,7 @@
             <div><strong>Destination name:</strong> <span>${job.data?.destinationName || ''}</span></div>
             <div><strong>Description:</strong> <span>${job.data?.description || ''}</span>
             <div><strong>Guessed category:</strong> <span>${job.data?.category ? job.data.category : '<em>Not yet classified</em>'}</span>
+            <div><strong>Guessed Budget:</strong> <span>${job.data?.budget ? job.data.budget : '<em>Not yet classified</em>'}</span>
             </div>
             ${ job.data?.prompt ? `<div><strong>Prompt:</strong><br>
                 <details>

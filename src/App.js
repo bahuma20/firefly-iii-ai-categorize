@@ -138,6 +138,7 @@ export default class App {
 
             const newData = Object.assign({}, job.data);
             newData.category = category;
+            newData.budget = budget;
             newData.prompt = prompt;
             newData.response = response;
 
