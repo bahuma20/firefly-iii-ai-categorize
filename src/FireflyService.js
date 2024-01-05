@@ -34,7 +34,50 @@ export default class FireflyService {
         return categories;
     }
 
-    async setCategory(transactionId, transactions, categoryId) {
+
+    async getBudgets() {
+        const response = await fetch(`${this.#BASE_URL}/api/v1/budgets`, {
+            headers: {
+                Authorization: `Bearer ${this.#PERSONAL_TOKEN}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new FireflyException(response.status, response, await response.text())
+        }
+
+        const data = await response.json();
+
+        const budgets = new Map();
+        data.data.forEach(budget => {
+            budgets.set(budget.attributes.name, budget.id);
+        });
+
+        return budgets;
+    }
+
+    async getBills()    {
+        const response = await fetch(`${this.#BASE_URL}/api/v1/bills`, {
+            headers: {
+                Authorization: `Bearer ${this.#PERSONAL_TOKEN}`,
+            }
+        });
+
+        if (!response.ok) {
+            throw new FireflyException(response.status, response, await response.text())
+        }
+
+        const data = await response.json();
+
+        const bills = new Map();
+        data.data.forEach(bill => {
+            bills.set(bill.attributes.name, bill.id);
+        });
+
+        return bills;
+    }
+
+    async setCategoryAndBudget(transactionId, transactions, categoryId, budgetId) {
         const tag = getConfigVariable("FIREFLY_TAG", "AI categorized");
 
         const body = {
@@ -50,11 +93,20 @@ export default class FireflyService {
             }
             tags.push(tag);
 
-            body.transactions.push({
+            const object = {
                 transaction_journal_id: transaction.transaction_journal_id,
-                category_id: categoryId,
                 tags: tags,
-            });
+            }
+
+            if (categoryId !== -1) {
+                object.category_id = categoryId;
+            }
+
+            if (budgetId !== -1) {
+                object.budget_id = budgetId;
+            }
+
+            body.transactions.push(object);
         })
 
         const response = await fetch(`${this.#BASE_URL}/api/v1/transactions/${transactionId}`, {

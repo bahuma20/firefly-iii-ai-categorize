@@ -126,8 +126,15 @@ export default class App {
             this.#jobList.setJobInProgress(job.id);
 
             const categories = await this.#firefly.getCategories();
+            const budgets = await this.#firefly.getBudgets();
 
-            const {category, prompt, response} = await this.#openAi.classify(Array.from(categories.keys()), destinationName, description)
+            const allLists = new Map();
+
+            allLists.set('categories', Array.from(categories.keys()));
+            allLists.set('budgets', Array.from(budgets.keys()));
+
+
+            const {prompt, category, budget, response} = await this.#openAi.classify(allLists, destinationName, description)
 
             const newData = Object.assign({}, job.data);
             newData.category = category;
@@ -136,8 +143,12 @@ export default class App {
 
             this.#jobList.updateJobData(job.id, newData);
 
-            if (category) {
-                await this.#firefly.setCategory(req.body.content.id, req.body.content.transactions, categories.get(category));
+            if (category || budget) {
+
+                const category_id = categories.indexOf(json.category) === -1 ? -1 : categories.get(category);
+                const budget_id = budgets.indexOf(json.budget) === -1 ? -1 : budgets.get(budget);
+
+                await this.#firefly.setCategoryAndBudget(req.body.content.id, req.body.content.transactions, category_id, budget_id);
             }
 
             this.#jobList.setJobFinished(job.id);

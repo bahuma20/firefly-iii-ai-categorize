@@ -3,7 +3,7 @@ import {getConfigVariable} from "./util.js";
 
 export default class OpenAiService {
     #openAi;
-    #model = "gpt-3.5-turbo-instruct";
+    #model = "gpt-3.5-turbo-1106";
 
     constructor() {
         const apiKey = getConfigVariable("OPENAI_API_KEY")
@@ -15,31 +15,62 @@ export default class OpenAiService {
         this.#openAi = new OpenAIApi(configuration)
     }
 
-    async classify(categories, destinationName, description) {
+    async classify(allLists, destinationName, description) {
         try {
-            const prompt = this.#generatePrompt(categories, destinationName, description);
+            const prompt = `Categorize this transaction from my bank account with the following 
+        description ${description} and the following destination ${destinationName}`;
 
-            const response = await this.#openAi.createCompletion({
+            const categories = allLists.get('categories');
+            const budgets = allLists.get('budgets');
+
+            const response = await this.#openAi.createChatCompletion({
                 model: this.#model,
-                prompt
+                messages: [{role: "user", content: prompt}],
+                functions: [
+                    {
+                        "name": "classification",
+                        "description": "Classify a financial transaction into a category and budget, use only values from the lists provided.",
+                        "parameters": {
+                            "type": "object",
+                            "properties": {
+                                "category": {
+                                    "type": "string",
+                                    "description": `The category to classify the transaction into. 
+                                    Use only these values: ${categories.join(", ")}.
+                                    Use none if no category applies.`
+                                },
+                                "budget": {
+                                    "type": "string",
+                                    "description": `The budget to classify the transaction into.
+                                    Use only these values: ${budgets.join(", ")}.
+                                    Use none if no budget applies.
+                                    `
+                                }
+                            },
+                            "required": ["category", "budget"]
+                        }
+                    }
+
+                ],
+                function_call: {name: "classification"},
             });
 
-            let guess = response.data.choices[0].text;
-            guess = guess.replace("\n", "");
-            guess = guess.trim();
+            const function_call = response.data.choices[0].message.function_call;
+            const json = JSON.parse(function_call.arguments);
 
-            if (categories.indexOf(guess) === -1) {
+            if (categories.indexOf(json.category) === -1 && budgets.indexOf(json.budget) === -1) {
                 console.warn(`OpenAI could not classify the transaction. 
                 Prompt: ${prompt}
-                OpenAIs guess: ${guess}`)
+                OpenAIs guess: ${function_call.arguments}`)
                 return null;
             }
 
             return {
                 prompt,
-                response: response.data.choices[0].text,
-                category: guess
-            };
+                response: function_call.arguments,
+                category: json.category,
+                budget: json.budget
+            }
 
         } catch (error) {
             if (error.response) {
@@ -53,11 +84,7 @@ export default class OpenAiService {
         }
     }
 
-    #generatePrompt(categories, destinationName, description) {
-        return `Given i want to categorize transactions on my bank account into this categories: ${categories.join(", ")}
-In which category would a transaction from "${destinationName}" with the subject "${description}" fall into?
-Just output the name of the category. Does not have to be a complete sentence.`;
-    }
+
 }
 
 class OpenAiException extends Error {
