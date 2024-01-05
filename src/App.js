@@ -145,9 +145,8 @@ export default class App {
             this.#jobList.updateJobData(job.id, newData);
 
             if (category || budget) {
-
-                const category_id = categories.indexOf(category) === -1 ? -1 : categories.get(category);
-                const budget_id = budgets.indexOf(budget) === -1 ? -1 : budgets.get(budget);
+                const category_id = categories.has(category) ? categories.get(category) : -1;
+                const budget_id = budgets.has(budget) ? budgets.get(budget) : -1;
 
                 await this.#firefly.setCategoryAndBudget(req.body.content.id, req.body.content.transactions, category_id, budget_id);
             }
