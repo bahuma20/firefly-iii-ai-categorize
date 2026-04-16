@@ -8,6 +8,10 @@ Unfortunately i am not able to invest more time into maintaining this project.
 
 Feel free to fork it and create a PR that adds a link to your fork in the README file.
 
+### Forks
+
+- **[openaccountants/firefly-iii-ai-categorize](https://github.com/openaccountants/firefly-iii-ai-categorize)** — Three-outcome classification model (Classified / Assumed / Needs Review), modern OpenAI SDK v4, configurable model and base URL, conservative defaults principle. Actively maintained.
+
 ## How it works
 
 It provides a webhook that you can set up to be called every time a new expense is added.
