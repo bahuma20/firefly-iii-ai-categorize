@@ -3,10 +3,10 @@
 This project allows you to automatically categorize your expenses in [Firefly III](https://www.firefly-iii.org/) by
 using OpenAI.
 
-## Please fork me
-Unfortunately i am not able to invest more time into maintaining this project. 
-
-Feel free to fork it and create a PR that adds a link to your fork in the README file.
+> [!WARNING]
+> This project is not maintained anymore.
+> 
+> You may have a look at this fork of it: [openaccountants/firefly-iii-ai-categorize](https://github.com/openaccountants/firefly-iii-ai-categorize)
 
 ## How it works
 
