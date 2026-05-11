@@ -6,7 +6,9 @@ using OpenAI.
 > [!WARNING]
 > This project is not maintained anymore.
 > 
-> You may have a look at this fork of it: [openaccountants/firefly-iii-ai-categorize](https://github.com/openaccountants/firefly-iii-ai-categorize)
+> You may have a look at one of these forks:
+> - [openaccountants/firefly-iii-ai-categorize](https://github.com/openaccountants/firefly-iii-ai-categorize)
+> - [ejagombar/FireflyIII-AI-Categorizer](https://github.com/ejagombar/FireflyIII-AI-Categorizer)
 
 ## How it works
 
